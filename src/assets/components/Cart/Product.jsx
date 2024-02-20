@@ -2,13 +2,27 @@ import React, { useState } from 'react'
 import styles from './Cart.module.sass'
 import ButtonDelete from '../../UI/ButtonDelete/ButtonDelete';
 
-const Product = ({item, deleteProduct}) => {
-    const [count, setCount] = useState(1);
+const Product = ({item, deleteProduct, increase, decrease, changeValue}) => {
+    const [count, setCount] = useState(item.count);
 
     const handleCountChange = (e) => {
-        setCount(e.target.value);
+        const newValue = +e.target.value
+        const updatedCount = newValue > 1 ? newValue : 1
+        setCount(updatedCount)
+        changeValue(item._id, updatedCount)
     }
 
+    const handleIncrease = () => {
+        const newCount = count + 1
+        setCount(newCount)
+        increase(item._id)
+    }
+
+    const handleDecrease = () => {
+        const newCount = count - 1 > 1 ? count - 1 : 1
+        setCount(newCount)
+        decrease(item._id)
+    }
 
   return (
     <section className={styles.product}>
@@ -17,13 +31,28 @@ const Product = ({item, deleteProduct}) => {
         <div className={styles.product__count}>
             <div className={styles.count}>
                 <div className={styles.count__box}>
-                    <input type="number" className={styles.count__input} min="1" max="100" value={count} onChange={handleCountChange}/>
+                    <input
+                        type="number"
+                        className={styles.count__input}
+                        min="1"
+                        max="100"
+                        value={count}
+                        onChange={handleCountChange}
+                    />
                 </div>
                 <div className={styles.count__controls}>
-                    <button type="button" className={styles.count__up}>
+                    <button
+                        type="button"
+                        className={styles.count__up}
+                        onClick={handleIncrease}
+                    >
                         <img src="./img/icons/icon-up.svg" alt="Increase"/>
                     </button>
-                    <button type="button" className={styles.count__down}>
+                    <button
+                        type="button"
+                        className={styles.count__down}
+                        onClick={handleDecrease}
+                    >
                         <img src="./img/icons/icon-down.svg" alt="Decrease"/>
                     </button>
                 </div>
@@ -34,7 +63,7 @@ const Product = ({item, deleteProduct}) => {
                 style: 'currency',
                 currency: 'RUB',
             }
-        ).format(item.price)}
+        ).format(item.priceTotal)}
         </div>
         <ButtonDelete deleteProduct={deleteProduct} item={item._id}/>
     </section>
